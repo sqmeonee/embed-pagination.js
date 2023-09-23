@@ -52,6 +52,9 @@ module.exports = {
 ```
 
 - <strong>Prefix Commands</strong>
+⚠️ DEPRECATED IN RECENT VERSIONS, FOR WORKING VERSION REFER TO VERSION 3.2.8 ⚠️
+- NO JSON SUPPORT
+- NO DISABLING BUTTONS
 ```js
 const { EmbedBuilder } = require('discord.js');
 const { prefixPaginate } = require('embed-pagination.js')
@@ -70,7 +73,6 @@ module.exports = {
             message: message,
             pages: [embed1, embed2], // Pagination will only work with embeds [PAGES GO IN ORDER FROM FIRST TO LAST]
             buttonstyles: { 
-
                 beginning: "Danger", // Any button style is fine except for "Link"
                 left: "Danger",    // Button styles include: Danger, Success, Secondary, and Primary
                 none: "Secondary", // (There's also Link but Don't use that!)

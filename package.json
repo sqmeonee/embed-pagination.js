@@ -1,7 +1,7 @@
 {
   "name": "embed-pagination.js",
-  "version": "3.2.4",
-  "description": "A discord.js add-on that lets you easily paginate embeds with tons of customizability!, -Added JSON embed support",
+  "version": "3.2.9",
+  "description": "A discord.js add-on that lets you easily paginate embeds with tons of customizability!, -Added option to disable buttons!",
   "main": "src/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -9,7 +9,5 @@
   "keywords": ["pagination","discord.js","embed"],
   "author": "sqmeone",
   "license": "ISC",
-  "dependencies": {
-    "discord.js": "14.13.0"
-  }
+  "dependencies": {}
 }
