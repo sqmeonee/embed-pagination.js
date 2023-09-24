@@ -90,3 +90,17 @@ module.exports = {
     }
 }
 ```
+
+# How To Disable Buttons
+```js
+slashPaginate({
+    interaction: interaction,
+    pages: pages,
+
+    disable: {
+        first_last: true, // Will disable the buttons that allow u to skip to the 1st and last page
+        placeholder: true // Will disable the button in the middle (It's just there for aesthetic)
+        //You cannot disable the previous pg and next pg buttons because its not pagination without them lol
+    }
+})
+```
