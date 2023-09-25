@@ -29,8 +29,7 @@ module.exports = {
        const embed2 = new EmbedBuilder()
        .setDescription('Page 2')
 
-        slashPaginate({
-            interaction: interaction,
+        slashPaginate(interaction, {
             //ephemeral: true/false (only works for slashPaginate())
             pages: [embed1, embed2], // Pagination will only work with embeds
             buttonstyles: { 
@@ -61,8 +60,7 @@ module.exports = {
 
 ## How To Disable Buttons
 ```js
-slashPaginate({
-    interaction: interaction,
+slashPaginate(interaction, {
     pages: pages,
 
     disable: {
@@ -75,10 +73,11 @@ slashPaginate({
 
 ## How to use forever pagination
 ```js
-const { foreverPagination } = require('embed-pagination.js');
+const { slashPaginateForever } = require('embed-pagination.js');
 
 const pages = [yourEmbed, yourEmbed2, yourEmbed3]
-foreverPagination.slash(interaction, { // Prefix commands unsupported
+
+await slashPaginateForever(interaction, { // Prefix commands unsupported
     pages: pages,
     /*
         disable: {
@@ -91,4 +90,22 @@ foreverPagination.slash(interaction, { // Prefix commands unsupported
 })
 
 //This function will refer to the first page whenever it reaches the last page
+```
+
+## How to use interval pagination
+```js
+const { intervalPagination } = require('embed-pagination.js');
+
+const pages = [yourEmbed, yourEmbed2, yourEmbed3];
+await intervalPagination(interaction, interaction.channel, {
+    // ephemeral: true/false (only works with reply)
+    pages: pages
+})
+
+
+//How to make the bot reply instead of send to the channel
+await intervalPagination(interaction, "reply", {
+    ephemeral: true/*false*/,
+    pages: pages
+})
 ```
