@@ -239,6 +239,203 @@ async function slashPaginate(options = {}) {
         return options.interaction.reply({ content: "There was an error executing this command", ephemeral: true })
     }
 }
+
+
 module.exports = { 
-    slashPaginate, 
+    slashPaginate, //regular slash command pagination
+
+
+    // F O R E V E R  P A G I N A T I O N
+    // F O R E V E R  P A G I N A T I O N
+    // F O R E V E R  P A G I N A T I O N
+    // F O R E V E R  P A G I N A T I O N
+
+    foreverPagination: {
+        slash: async function (interaction, options = {}) {
+            try {
+                if (!options.ephemeral) options.ephemeral = false;
+                if(!interaction) throw new TypeError('Provide an interaction argument')
+                if(!options.pages) throw new TypeError('Provide a page argument')
+                if(!Array.isArray(options.pages)) throw new TypeError('Pages must be an array')
+                if(!options.emojis) options.emojis = {};
+                
+                if(!options.emojis.left) options.emojis.left = "◀️";
+                if(!options.emojis.none) options.emojis.none = "⏹️";
+                if(!options.emojis.right) options.emojis.right = "▶️";
+            
+                if(!Array.isArray(options.pages)) throw new TypeError('Pages must be an array')
+        
+                if (!options.disable) options.disable = {};
+                if (!options.disable.placeholder) options.disable.placeholder = false;
+            
+                if(!options.buttonstyles) options.buttonstyles = {};
+                if(!options.buttonstyles.left) options.buttonstyles.left = "Primary";
+                if(!options.buttonstyles.none) options.buttonstyles.none = "Secondary";
+                if(!options.buttonstyles.right) options.buttonstyles.right = "Primary";
+            
+                if (typeof options.ephemeral !== "boolean") throw new TypeError("Ephemeral needs to be in a boolean format")
+            
+                if(options.buttonstyles.left === 'Primary') options.buttonstyles.beginning = ButtonStyle.Primary
+                else if(options.buttonstyles.left === 'Secondary') options.buttonstyles.beginning = ButtonStyle.Secondary
+                else if(options.buttonstyles.left === 'Danger') options.buttonstyles.beginning = ButtonStyle.Danger
+                else if(options.buttonstyles.left === 'Success') options.buttonstyles.beginning = ButtonStyle.Success
+                else if(options.buttonstyles.left === 'Link') throw new TypeError('Button style cannot be "Link"')
+                else throw new TypeError('Give a valid ButtonStyle')
+            
+                if(options.buttonstyles.none === 'Primary') options.buttonstyles.none = ButtonStyle.Primary
+                else if(options.buttonstyles.none === 'Secondary') options.buttonstyles.beginning = ButtonStyle.Secondary
+                else if(options.buttonstyles.none === 'Danger') options.buttonstyles.beginning = ButtonStyle.Danger
+                else if(options.buttonstyles.none === 'Success') options.buttonstyles.beginning = ButtonStyle.Success
+                else if(options.buttonstyles.none === 'Link') throw new TypeError('Button style cannot be "Link"')
+                else throw new TypeError('Give a valid ButtonStyle')
+            
+                if(options.buttonstyles.right === 'Primary') options.buttonstyles.beginning = ButtonStyle.Primary
+                else if(options.buttonstyles.right === 'Secondary') options.buttonstyles.beginning = ButtonStyle.Secondary
+                else if(options.buttonstyles.right === 'Danger') options.buttonstyles.beginning = ButtonStyle.Danger
+                else if(options.buttonstyles.right === 'Success') options.buttonstyles.beginning = ButtonStyle.Success
+                else if(options.buttonstyles.right === 'Link') throw new TypeError('Button style cannot be "Link"')
+                else throw new TypeError('Give a valid ButtonStyle')
+            
+                if (options.pages.length === 1) {
+                   const page = await interaction.reply({
+                    embeds: options.pages,
+                    components: [],
+                    fetchReply: true,
+                    ephemeral: options.ephemeral
+                   })
+            
+                   return page;
+                }
+            
+                const prev = new ButtonBuilder()
+                .setCustomId('prev')
+                .setEmoji(options.emojis.left)
+                .setStyle(options.buttonstyles.left)
+            
+                const none = new ButtonBuilder()
+                .setCustomId('none')
+                .setEmoji(options.emojis.none)
+                .setStyle(options.buttonstyles.none)
+                .setDisabled(true)
+            
+                const next = new ButtonBuilder()
+                .setCustomId('next')
+                .setEmoji(options.emojis.right)
+                .setStyle(options.buttonstyles.right)
+            
+                let buttonRow = new ActionRowBuilder().setComponents(prev, none, next)
+                if (options.disable.placeholder == true) buttonRow = buttonRow.setComponents(prev, next);
+
+                const pages = options.pages
+                let index = 0;
+            
+                if (typeof options.pages[0] == 'object') {
+                    const obj = options.pages[0]
+                    if (!obj.data) {
+                    const embed = new EmbedBuilder()
+                    if (obj.color) embed.setColor(obj.color)
+                    if (obj.title) embed.setTitle(obj.title)
+                    if (obj.description) embed.setDescription(obj.description)
+                    if (obj.author)
+                    if (obj.fields) {
+                        if (obj.fields.length > 25) throw new Error("Embed cannot have more fields than 25")
+                        for (let field of obj.fields) {
+                            if (field.value && !field.name || field.name && !field.value) throw new Error("Embed needs to have both field params filled out")
+                            embed.addFields(
+                                { name: field.name, value: field.value }
+                            )}}
+                    if (obj.footer) {
+                        if (!obj.footer.text) throw new Error("Embed footer requires text param")
+                        if (obj.footer.icon_url) embed.setFooter({ text: obj.footer.text, icon_url: obj.footer.icon_url });
+                        else embed.setFooter({ text: obj.footer.text })
+                    }
+                    if (obj.author) {
+                        if (!obj.author.name) throw new Error("Embed author requires name param")
+                        if (obj.footer.icon_url) embed.setAuthor({ name: obj.author.name, iconURL: obj.author.icon_url})
+                        else embed.setAuthor({ name: obj.author.name })
+                    }
+                    if (obj.thumbnail) {
+                            embed.setThumbnail(obj.thumbnail)
+                    }
+                    if (obj.image) {
+                        embed.setImage(obj.image)
+                    }
+                    if (obj.timestamp) {
+                        if (obj.timestamp == true) embed.setTimestamp();
+                    }
+                    options.pages[index] = embed;
+                    }
+                }
+            
+                const currentPage = await interaction.reply({
+                    embeds: [options.pages[index]],
+                    components: [buttonRow],
+                    fetchReply: true,
+                    ephemeral: options.ephemeral
+                })
+            
+                const collector = await currentPage.createMessageComponentCollector({
+                    componentType: ComponentType.Button,
+                })
+            
+                collector.on('collect', async (i) => {
+                    if (i.user.id !== interaction.user.id) return await i.reply({ content: 'You can\'t use these buttons', ephemeral: true})
+                    
+                    if(i.customId == 'prev') {
+                        index--;
+                    } else if(i.customId == 'next') {
+                        index++;
+                    }
+
+                    if (index > pages.length - 1) index = 0;
+                    if (index < 0) index = pages.length - 1;
+
+                    if (typeof options.pages[0] == 'object') {
+                        const obj = options.pages[0]
+                            if (!obj.data){
+                                const embed = new EmbedBuilder()
+                                if (obj.color) embed.setColor(obj.color)
+                                if (obj.title) embed.setTitle(obj.title)
+                                if (obj.description) embed.setDescription(obj.description)
+                                if (obj.fields) {
+                                    if (obj.fields.length > 25) throw new Error("Embed cannot have more fields than 25")
+                                    for (let field of obj.fields) {
+                                        if (field.value && !field.name || field.name && !field.value) throw new Error("Embed needs to have both field params filled out")
+                                        embed.addFields(
+                                            { name: field.name, value: field.value }
+                                        )}}
+                                if (obj.footer) {
+                                    if (!obj.footer.text) throw new Error("Embed footer requires text param")
+                                    if (obj.footer.icon_url) embed.setFooter({ text: obj.footer.text, icon_url: obj.footer.icon_url });
+                                    else embed.setFooter({ text: obj.footer.text })
+                                }
+                                if (obj.author) {
+                                    if (!obj.author.name) throw new Error("Embed author requires name param")
+                                    if (obj.footer.icon_url) embed.setAuthor({ name: obj.author.name, iconURL: obj.author.icon_url})
+                                    else embed.setAuthor({ name: obj.author.name })
+                                }
+                                if (obj.thumbnail) {
+                                        embed.setThumbnail(obj.thumbnail)
+                                }
+                                if (obj.image) {
+                                    embed.setImage(obj.image)
+                                }
+                                if (obj.timestamp) {
+                                    if (obj.timestamp == true) embed.setTimestamp();
+                                }
+                                options.pages[index] = embed;
+                            }   
+                    }
+            
+                    await i.update({
+                        embeds: [options.pages[index]],
+                        components: [buttonRow],
+                    })
+                })
+            } catch (err) {
+                console.log(err)
+                return interaction.reply({ content: "There was an error executing this command!", ephemeral: true })
+            }
+        }
+    }
 }
